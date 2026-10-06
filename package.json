@@ -1,0 +1,235 @@
+{
+  "name": "markdown-edita",
+  "displayName": "Markdown_Edita",
+  "description": "Markdown language server and a single pane live editing surface with modal keys",
+  "version": "0.1.0",
+  "publisher": "XXX",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "files": [
+    "dist",
+    "media",
+    "package.json"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown",
+    "onCustomEditor:markdown-edita.editor"
+  ],
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "vscode:prepublish": "node esbuild.mjs --production"
+  },
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "markdown-edita.editor",
+        "displayName": "Markdown_Edita Live Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          },
+          {
+            "filenamePattern": "*.markdown"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      {
+        "command": "markdown-edita.openTextEditor",
+        "title": "Markdown_Edita: Open with Text Editor"
+      },
+      {
+        "command": "markdown-edita.openWithMarkdownEdita",
+        "title": "Markdown_Edita: Open with Markdown_Edita Live Editor"
+      },
+      {
+        "command": "markdown-edita.togglePreview",
+        "title": "Markdown_Edita: Toggle Preview Mode"
+      },
+      {
+        "command": "markdown-edita.toggleInlineRendering",
+        "title": "Markdown_Edita: Toggle Inline Rendering"
+      },
+      {
+        "command": "markdown-edita.toggleBlockWidgets",
+        "title": "Markdown_Edita: Toggle Block Widgets"
+      },
+      {
+        "command": "markdown-edita.pickTheme",
+        "title": "Markdown_Edita: Pick Color Palette"
+      },
+      {
+        "command": "markdown-edita.pickGlyphs",
+        "title": "Markdown_Edita: Pick Glyph Style"
+      },
+      {
+        "command": "markdown-edita.toggleGlyphs",
+        "title": "Markdown_Edita: Toggle Glyph Style",
+        "icon": "$(case-sensitive)"
+      },
+      {
+        "command": "markdown-edita.showStatus",
+        "title": "Markdown_Edita: Show Editor Status"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "markdown-edita.toggleGlyphs",
+          "when": "activeCustomEditorId == markdown-edita.editor",
+          "group": "navigation@8"
+        },
+        {
+          "command": "markdown-edita.openTextEditor",
+          "when": "activeCustomEditorId == markdown-edita.editor",
+          "group": "navigation@9"
+        },
+        {
+          "command": "markdown-edita.openWithMarkdownEdita",
+          "when": "editorLangId == markdown && activeCustomEditorId != markdown-edita.editor",
+          "group": "navigation@9"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Markdown_Edita",
+      "properties": {
+        "markdown-edita.livePreview.inline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render inline markdown syntax on lines that do not hold the cursor."
+        },
+        "markdown-edita.livePreview.blocks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render tables, fenced code blocks and HTML blocks that do not hold the cursor."
+        },
+        "markdown-edita.livePreview.images": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render images on lines that do not hold the cursor."
+        },
+        "markdown-edita.livePreview.previewMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Start in preview mode, where cursor motion keeps source hidden and only insert mode reveals the cursor line."
+        },
+        "markdown-edita.tui.modalKeys": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable normal, insert, visual and command modes inside the Markdown_Edita editor."
+        },
+        "markdown-edita.tui.lineNumbers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show line numbers in the Markdown_Edita editor gutter."
+        },
+        "markdown-edita.tui.relativeLineNumbers": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show line numbers relative to the cursor line."
+        },
+        "markdown-edita.appearance.theme": {
+          "type": "string",
+          "enum": [
+            "tokyo",
+            "vscode",
+            "gruvbox",
+            "nord",
+            "dracula",
+            "solarized",
+            "mono"
+          ],
+          "default": "tokyo",
+          "description": "Terminal palette used for headings, emphasis, links, code, tables and diagnostics."
+        },
+        "markdown-edita.appearance.glyphs": {
+          "type": "string",
+          "enum": [
+            "nerd",
+            "ascii"
+          ],
+          "default": "nerd",
+          "description": "Glyph set for bullets, tasks, quotes, folds, frames and diagnostic markers."
+        },
+        "markdown-edita.lint.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Publish markdown lint diagnostics from the language server."
+        },
+        "markdown-edita.lint.rules": {
+          "type": "object",
+          "default": {
+            "heading-increment": "warning",
+            "single-h1": "info",
+            "duplicate-heading": "warning",
+            "missing-space-atx": "error",
+            "multiple-space-atx": "info",
+            "no-hard-tabs": "warning",
+            "trailing-spaces": "info",
+            "multiple-blanks": "info",
+            "fenced-code-language": "info",
+            "broken-link": "warning",
+            "undefined-reference": "warning",
+            "unused-definition": "info",
+            "empty-link": "warning"
+          },
+          "description": "Severity per lint rule, accepted values are error, warning, info and off."
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-go": "^6.0.1",
+    "@codemirror/lang-html": "^6.4.12",
+    "@codemirror/lang-java": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/lang-rust": "^6.0.2",
+    "@codemirror/lang-sql": "^6.10.0",
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/lang-yaml": "^6.1.3",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/legacy-modes": "^6.5.4",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.13",
+    "@lezer/common": "^1.5.3",
+    "@lezer/highlight": "^1.2.5",
+    "@lezer/markdown": "^1.7.2",
+    "@replit/codemirror-vim": "^6.4.0",
+    "@vscode/markdown-it-katex": "^1.1.2",
+    "gemoji": "^8.1.0",
+    "katex": "^0.16.47",
+    "markdown-it": "^15.0.2",
+    "mermaid": "^11.17.2",
+    "shiki": "^4.5.0",
+    "vscode-languageclient": "^10.1.2",
+    "vscode-languageserver": "^10.1.2"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.2.0",
+    "@types/node": "^26.6.4",
+    "@types/vscode": "~1.90.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

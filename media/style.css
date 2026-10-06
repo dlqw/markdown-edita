@@ -1,0 +1,773 @@
+:root {
+  --markdown-edita-bg: #24283b;
+  --markdown-edita-text: #c0caf5;
+  --markdown-edita-dim: #565f89;
+  --markdown-edita-border: #3b4261;
+  --markdown-edita-accent: #7aa2f7;
+  --markdown-edita-h1: #7aa2f7;
+  --markdown-edita-h2: #e0af68;
+  --markdown-edita-h3: #9ece6a;
+  --markdown-edita-h4: #1abc9c;
+  --markdown-edita-h5: #bb9af7;
+  --markdown-edita-h6: #9d7cd8;
+  --markdown-edita-strong: #ff9e64;
+  --markdown-edita-em: #bb9af7;
+  --markdown-edita-strike: #565f89;
+  --markdown-edita-link: #1abc9c;
+  --markdown-edita-url: #565f89;
+  --markdown-edita-code: #7aa2f7;
+  --markdown-edita-codeBg: #414868;
+  --markdown-edita-quote: #565f89;
+  --markdown-edita-bullet: #ff9e64;
+  --markdown-edita-task: #7aa2f7;
+  --markdown-edita-taskDone: #73daca;
+  --markdown-edita-tableHead: #f7768e;
+  --markdown-edita-tableBorder: #3b4261;
+  --markdown-edita-frame: #545c7e;
+  --markdown-edita-math: #7dcfff;
+  --markdown-edita-html: #2ac3de;
+  --markdown-edita-error: #f7768e;
+  --markdown-edita-warning: #e0af68;
+  --markdown-edita-info: #7aa2f7;
+  --markdown-edita-diag-error: 'x';
+  --markdown-edita-diag-warning: '!';
+  --markdown-edita-diag-info: 'i';
+  --markdown-edita-file-glyph: '';
+  --markdown-edita-rule-glyph: '-';
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--markdown-edita-bg);
+  color: var(--markdown-edita-text);
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: var(--vscode-editor-font-size, 13px);
+}
+
+#markdown-edita-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#markdown-edita-editor {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#markdown-edita-editor .cm-editor {
+  height: 100%;
+}
+
+#markdown-edita-editor .cm-editor.cm-focused {
+  outline: none;
+}
+
+#markdown-edita-status {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1ch;
+  height: 1.7em;
+  padding: 0 1ch;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--vscode-statusBar-background, var(--markdown-edita-bg));
+  color: var(--vscode-statusBar-foreground, var(--markdown-edita-text));
+  border-top: 1px solid var(--markdown-edita-border);
+}
+
+#markdown-edita-mode {
+  padding: 0 1ch;
+  font-weight: 700;
+  color: var(--markdown-edita-bg);
+  background: var(--markdown-edita-accent);
+}
+
+#markdown-edita-file {
+  color: var(--markdown-edita-dim);
+}
+
+#markdown-edita-file::before {
+  content: var(--markdown-edita-file-glyph) ' ';
+  color: var(--markdown-edita-accent);
+}
+
+#markdown-edita-vim {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 1ch;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#markdown-edita-vim > span:first-child {
+  color: var(--markdown-edita-accent);
+  font-weight: 700;
+  white-space: pre;
+}
+
+#markdown-edita-vim > span:nth-child(2) {
+  flex: 1 1 auto;
+}
+
+#markdown-edita-vim > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#markdown-edita-vim > div {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+}
+
+#markdown-edita-vim input {
+  flex: 1 1 auto;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  min-width: 0;
+}
+
+#markdown-edita-message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#markdown-edita-diagnostics {
+  color: var(--markdown-edita-warning);
+}
+
+#markdown-edita-glyphs {
+  padding: 0 1ch;
+  color: var(--markdown-edita-dim);
+  cursor: pointer;
+  user-select: none;
+}
+
+#markdown-edita-glyphs:hover {
+  color: var(--markdown-edita-accent);
+  text-decoration: underline;
+}
+
+#markdown-edita-position {
+  color: var(--markdown-edita-dim);
+}
+
+#markdown-edita-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 24ch;
+  padding: 0.25em 0;
+  background: var(--markdown-edita-bg);
+  color: var(--markdown-edita-text);
+  border: 1px solid var(--markdown-edita-border);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  outline: none;
+}
+
+#markdown-edita-menu[hidden] {
+  display: none;
+}
+
+.markdown-edita-menu-title {
+  padding: 0.2em 1ch 0.3em;
+  color: var(--markdown-edita-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85em;
+}
+
+.markdown-edita-menu-item {
+  display: flex;
+  align-items: baseline;
+  gap: 1ch;
+  padding: 0.25em 1ch;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.markdown-edita-menu-item[data-active='true'] {
+  background: var(--markdown-edita-codeBg);
+  color: var(--markdown-edita-strong);
+}
+
+.markdown-edita-menu-swatch {
+  align-self: center;
+  width: 0.6em;
+  height: 0.6em;
+  flex: 0 0 auto;
+  border: 1px solid var(--markdown-edita-border);
+}
+
+.markdown-edita-menu-note {
+  color: var(--markdown-edita-dim);
+  font-size: 0.85em;
+}
+
+.markdown-edita-menu-check {
+  margin-left: auto;
+  padding-left: 2ch;
+  color: var(--markdown-edita-accent);
+}
+
+.markdown-edita-message.markdown-edita-error {
+  color: var(--markdown-edita-error);
+}
+
+.markdown-edita-message.markdown-edita-warning {
+  color: var(--markdown-edita-warning);
+}
+
+.cm-editor .cm-line.markdown-edita-h1 {
+  color: var(--markdown-edita-h1);
+  font-size: 1.15em;
+  font-weight: 700;
+  line-height: 1.25;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.cm-editor .cm-line.markdown-edita-h2 {
+  color: var(--markdown-edita-h2);
+  font-size: 1.08em;
+  font-weight: 700;
+  line-height: 1.25;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.cm-editor .cm-line.markdown-edita-h3 {
+  color: var(--markdown-edita-h3);
+  font-size: 1.02em;
+  font-weight: 700;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.cm-line.markdown-edita-h4 {
+  color: var(--markdown-edita-h4);
+  font-weight: 700;
+}
+
+.cm-line.markdown-edita-h5 {
+  color: var(--markdown-edita-h5);
+  font-weight: 700;
+}
+
+.cm-line.markdown-edita-h6 {
+  color: var(--markdown-edita-h6);
+  font-weight: 700;
+}
+
+.markdown-edita-heading-mark {
+  margin-right: 0.7ch;
+  font-size: 0.9em;
+  opacity: 0.65;
+}
+
+.markdown-edita-h1-mark {
+  color: var(--markdown-edita-h1);
+}
+
+.markdown-edita-h2-mark {
+  color: var(--markdown-edita-h2);
+}
+
+.markdown-edita-h3-mark {
+  color: var(--markdown-edita-h3);
+}
+
+.markdown-edita-h4-mark {
+  color: var(--markdown-edita-h4);
+}
+
+.markdown-edita-h5-mark {
+  color: var(--markdown-edita-h5);
+}
+
+.markdown-edita-h6-mark {
+  color: var(--markdown-edita-h6);
+}
+
+.cm-line.markdown-edita-quote {
+  color: var(--markdown-edita-quote);
+}
+
+.markdown-edita-quote-mark {
+  color: var(--markdown-edita-quote);
+  margin-right: 0.2ch;
+}
+
+.markdown-edita-strong {
+  color: var(--markdown-edita-strong);
+  font-weight: 700;
+}
+
+.markdown-edita-em {
+  color: var(--markdown-edita-em);
+  font-style: italic;
+}
+
+.markdown-edita-strike {
+  color: var(--markdown-edita-strike);
+  text-decoration: line-through;
+}
+
+.markdown-edita-link {
+  color: var(--markdown-edita-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown-edita-link:hover,
+.markdown-edita-block a:hover {
+  color: var(--markdown-edita-accent);
+}
+
+.markdown-edita-link-icon {
+  margin-right: 0.4ch;
+  color: var(--markdown-edita-url);
+  font-size: 0.85em;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.markdown-edita-code {
+  padding: 0 0.3ch;
+  color: var(--markdown-edita-code);
+}
+
+.markdown-edita-bullet {
+  color: var(--markdown-edita-bullet);
+  margin-right: 0.2ch;
+}
+
+.markdown-edita-task {
+  color: var(--markdown-edita-task);
+  margin-right: 0.3ch;
+}
+
+.markdown-edita-task-done {
+  color: var(--markdown-edita-taskDone);
+}
+
+.markdown-edita-task:not(.markdown-edita-task-done):hover,
+.markdown-edita-task-done:hover {
+  filter: brightness(1.25);
+}
+
+.markdown-edita-emoji {
+  font-size: 1.05em;
+}
+
+.markdown-edita-footnote-ref,
+.markdown-edita-footnote-mark {
+  color: var(--markdown-edita-link);
+  border-radius: 0.6ch;
+  padding: 0 0.5ch;
+  font-size: 0.85em;
+}
+
+.markdown-edita-footnote-ref {
+  margin-left: 0.15ch;
+  vertical-align: super;
+  font-size: 0.78em;
+  cursor: pointer;
+}
+
+.markdown-edita-footnote-mark {
+  margin-right: 0.3ch;
+}
+
+.cm-line.markdown-edita-footnote-def {
+  color: var(--markdown-edita-dim);
+}
+
+.markdown-edita-alert-marker {
+  margin-right: 0.5ch;
+  padding: 0 0.6ch;
+  border-radius: 0.6ch;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+}
+
+.markdown-edita-alert-marker-note,
+.cm-line.markdown-edita-alert-note .markdown-edita-quote-mark {
+  color: var(--markdown-edita-info);
+}
+
+.markdown-edita-alert-marker-tip,
+.cm-line.markdown-edita-alert-tip .markdown-edita-quote-mark {
+  color: var(--markdown-edita-taskDone);
+}
+
+.markdown-edita-alert-marker-important,
+.cm-line.markdown-edita-alert-important .markdown-edita-quote-mark {
+  color: var(--markdown-edita-em);
+}
+
+.markdown-edita-alert-marker-warning,
+.cm-line.markdown-edita-alert-warning .markdown-edita-quote-mark {
+  color: var(--markdown-edita-warning);
+}
+
+.markdown-edita-alert-marker-caution,
+.cm-line.markdown-edita-alert-caution .markdown-edita-quote-mark {
+  color: var(--markdown-edita-error);
+}
+
+.markdown-edita-mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 0.4em 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.markdown-edita-mermaid-canvas svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-edita-mermaid-error .markdown-edita-mermaid-canvas {
+  color: var(--markdown-edita-error);
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.9em;
+  white-space: pre-wrap;
+}
+
+.markdown-edita-rule {
+  overflow: hidden;
+  white-space: nowrap;
+  height: 1.2em;
+  color: var(--markdown-edita-frame);
+}
+
+.markdown-edita-image img {
+  max-width: 100%;
+  max-height: 45vh;
+  vertical-align: middle;
+  border: 1px solid var(--markdown-edita-border);
+}
+
+.markdown-edita-image-missing::after {
+  content: ' [missing image]';
+  color: var(--markdown-edita-error);
+}
+
+.markdown-edita-html {
+  color: var(--markdown-edita-html);
+}
+
+.markdown-edita-math {
+  color: var(--markdown-edita-math);
+}
+
+.markdown-edita-math-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--markdown-edita-math-lines, 1) * 1.3em);
+  overflow: hidden;
+  text-align: center;
+}
+
+.markdown-edita-math-fit {
+  transform: scale(var(--markdown-edita-math-scale, 1));
+}
+
+.markdown-edita-math-line {
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.markdown-edita-wide {
+  display: inline-block;
+  width: 2ch;
+  text-align: center;
+}
+
+.markdown-edita-tab,
+.markdown-edita-space {
+  display: inline-block;
+  width: 1ch;
+  text-align: center;
+  color: var(--markdown-edita-dim);
+}
+
+.markdown-edita-frame-row {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+  color: var(--markdown-edita-text);
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  tab-size: 4;
+}
+
+.markdown-edita-frame-row strong {
+  font-weight: 700;
+  font-synthesis-weight: none;
+}
+
+.markdown-edita-frame-row em {
+  font-style: italic;
+  font-synthesis-style: none;
+}
+
+.markdown-edita-frame-row code,
+.markdown-edita-frame-row kbd,
+.markdown-edita-frame-row samp {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.markdown-edita-cell {
+  display: inline-block;
+  white-space: pre;
+}
+
+.markdown-edita-cell-center {
+  text-align: center;
+}
+
+.markdown-edita-cell-right {
+  text-align: right;
+}
+
+.markdown-edita-diagnostic {
+  margin-left: 2ch;
+  opacity: 0.62;
+  user-select: none;
+  pointer-events: none;
+  font-style: italic;
+}
+
+.markdown-edita-diagnostic-item + .markdown-edita-diagnostic-item::before {
+  content: ' · ';
+}
+
+.markdown-edita-diagnostic-error {
+  color: var(--markdown-edita-error);
+}
+
+.markdown-edita-diagnostic-warning {
+  color: var(--markdown-edita-warning);
+}
+
+.markdown-edita-diagnostic-info {
+  color: var(--markdown-edita-info);
+}
+
+.markdown-edita-diag-hint {
+  color: var(--markdown-edita-dim);
+}
+
+mark {
+  background: color-mix(in srgb, currentColor 22%, transparent);
+  color: var(--markdown-edita-strong);
+}
+
+.markdown-edita-frame {
+  color: var(--markdown-edita-frame);
+}
+
+.markdown-edita-fence-lang {
+  color: var(--markdown-edita-accent);
+  font-weight: 700;
+}
+
+.markdown-edita-fence-number {
+  color: var(--markdown-edita-dim);
+}
+
+.markdown-edita-fence-code {
+  color: inherit;
+}
+
+.markdown-edita-block {
+  margin: 0.15em 0;
+}
+
+.markdown-edita-block > :first-child {
+  margin-top: 0;
+}
+
+.markdown-edita-block > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-edita-block h1,
+.markdown-edita-block h2,
+.markdown-edita-block h3,
+.markdown-edita-block h4,
+.markdown-edita-block h5,
+.markdown-edita-block h6 {
+  margin: 0.15em 0 0.1em;
+  line-height: 1.25;
+}
+
+.markdown-edita-block h1 {
+  color: var(--markdown-edita-h1);
+  font-size: 1.15em;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.markdown-edita-block h2 {
+  color: var(--markdown-edita-h2);
+  font-size: 1.08em;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.markdown-edita-block h3 {
+  color: var(--markdown-edita-h3);
+  font-size: 1.02em;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.markdown-edita-block h4 {
+  color: var(--markdown-edita-h4);
+}
+
+.markdown-edita-block h5 {
+  color: var(--markdown-edita-h5);
+}
+
+.markdown-edita-block h6 {
+  color: var(--markdown-edita-h6);
+}
+
+.markdown-edita-block p,
+.markdown-edita-block ul,
+.markdown-edita-block ol,
+.markdown-edita-block blockquote,
+.markdown-edita-block pre,
+.markdown-edita-block table {
+  margin: 0.25em 0;
+}
+
+.markdown-edita-block ul,
+.markdown-edita-block ol {
+  padding-left: 3ch;
+}
+
+.markdown-edita-block blockquote {
+  padding-left: 1ch;
+  border-left: 1px solid var(--markdown-edita-quote);
+  color: var(--markdown-edita-quote);
+}
+
+.markdown-edita-block strong {
+  color: var(--markdown-edita-strong);
+}
+
+.markdown-edita-block em {
+  color: var(--markdown-edita-em);
+}
+
+.markdown-edita-block del {
+  color: var(--markdown-edita-strike);
+}
+
+.markdown-edita-block a {
+  color: var(--markdown-edita-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown-edita-block code {
+  padding: 0 0.3ch;
+  font-family: inherit;
+  color: var(--markdown-edita-code);
+}
+
+.markdown-edita-block pre {
+  padding: 0.3em 1ch;
+  overflow-x: auto;
+  background: var(--markdown-edita-codeBg);
+  border-left: 1px solid var(--markdown-edita-frame);
+}
+
+.markdown-edita-block table {
+  border-collapse: collapse;
+}
+
+.markdown-edita-block th {
+  color: var(--markdown-edita-tableHead);
+  border-bottom: 1px solid var(--markdown-edita-tableBorder);
+}
+
+.markdown-edita-block th,
+.markdown-edita-block td {
+  padding: 0.1em 1ch;
+  text-align: left;
+}
+
+.markdown-edita-block img {
+  max-width: 100%;
+}
+
+.markdown-edita-block hr {
+  border: none;
+  border-top: 1px solid var(--markdown-edita-frame);
+}
+
+.markdown-edita-table-head {
+  color: var(--markdown-edita-tableHead);
+}
+
+.cm-gutter-lint .cm-lint-marker-error {
+  content: var(--markdown-edita-diag-error) !important;
+  color: var(--markdown-edita-error);
+}
+
+.cm-gutter-lint .cm-lint-marker-warning {
+  content: var(--markdown-edita-diag-warning) !important;
+  color: var(--markdown-edita-warning);
+}
+
+.cm-gutter-lint .cm-lint-marker-info {
+  content: var(--markdown-edita-diag-info) !important;
+  color: var(--markdown-edita-info);
+}
+
+.cm-vimCursorLayer,
+.cm-fat-cursor {
+  z-index: 5;
+}
+
+.cm-fat-cursor {
+  background: transparent !important;
+  box-shadow: inset 0 -2px 0 0 var(--markdown-edita-accent);
+}
+
+.cm-editor:not(.cm-focused) .cm-fat-cursor {
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: inset 0 -2px 0 0 var(--markdown-edita-dim);
+}
+
+.katex-display {
+  margin: 0.15em 0;
+}
+
+.markdown-edita-math-inline .katex {
+  font-size: 1em;
+  line-height: 0;
+}
