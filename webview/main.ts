@@ -29,7 +29,7 @@ import {
   type CompletionResult,
 } from '@codemirror/autocomplete';
 import { GFM } from '@lezer/markdown';
-import { getCM, vim, Vim } from '@replit/codemirror-vim';
+import { getCM, vim, Vim, type MotionFn } from '@replit/codemirror-vim';
 import type {
   HostMessage,
   LinkTarget,
@@ -44,7 +44,6 @@ import { activeGlyphName, applyGlyphs, glyphsFor } from './glyphs';
 import { createContextMenu } from './menu';
 import { codeLanguages } from './languages';
 import {
-  decorationField,
   DEFAULT_SETTINGS,
   livePreview,
   refreshPreview,
@@ -127,54 +126,32 @@ function gutterExtension(value: MarkdownEditaSettings): Extension {
   ];
 }
 
-interface PendingVimInput {
-  keyBuffer?: string[];
-  operator?: unknown;
-}
+const stepCursorLine =
+  (direction: number): MotionFn =>
+  (cm, head, motionArgs) => {
+    const repeat = Math.max((motionArgs as { repeat?: number }).repeat ?? 1, 1);
+    const target = Math.min(Math.max(head.line + direction * repeat, 0), cm.lineCount() - 1);
+    const text = cm.getLine(target);
+    return { line: target, ch: Math.min(head.ch, text.length) };
+  };
 
-function enterWidgetBlock(view: EditorView, direction: number): boolean {
-  const adapter = getCM(view);
-  if (adapter) {
-    const vim = adapter.state?.vim;
-    const pending = vim?.inputState as PendingVimInput | undefined;
-    if (
-      vim?.insertMode ||
-      vim?.visualMode ||
-      (pending?.keyBuffer?.length ?? 0) > 0 ||
-      Boolean(pending?.operator)
-    ) {
-      return false;
+function installLineMotions(): void {
+  Vim.defineMotion('markdownEditaStepDown', stepCursorLine(1));
+  Vim.defineMotion('markdownEditaStepUp', stepCursorLine(-1));
+  const bindings: [string, string][] = [
+    ['j', 'Down'],
+    ['<Down>', 'Down'],
+    ['k', 'Up'],
+    ['<Up>', 'Up'],
+  ];
+  for (const context of ['normal', 'visual', 'operatorPending']) {
+    for (const [key, name] of bindings) {
+      Vim.mapCommand(key, 'motion', `markdownEditaStep${name}`, {}, { context });
     }
   }
-  const selection = view.state.selection.main;
-  if (!selection.empty) {
-    return false;
-  }
-  const doc = view.state.doc;
-  const line = doc.lineAt(selection.head);
-  const widgetLines = view.state.field(decorationField).widgetLines;
-  if (widgetLines.size === 0) {
-    return false;
-  }
-  const target = line.number + direction;
-  if (target < 1 || target > doc.lines || !widgetLines.has(target)) {
-    return false;
-  }
-  const targetLine = doc.line(target);
-  const column = selection.head - line.from;
-  view.dispatch({
-    selection: { anchor: Math.min(targetLine.from + column, targetLine.to) },
-    scrollIntoView: true,
-  });
-  return true;
 }
 
-const paragraphMotionKeymap = keymap.of([
-  { key: 'j', run: (view) => enterWidgetBlock(view, 1) },
-  { key: 'ArrowDown', run: (view) => enterWidgetBlock(view, 1) },
-  { key: 'k', run: (view) => enterWidgetBlock(view, -1) },
-  { key: 'ArrowUp', run: (view) => enterWidgetBlock(view, -1) },
-]);
+installLineMotions();
 
 let documentUri = '';
 
@@ -182,7 +159,6 @@ const view = new EditorView({
   state: EditorState.create({
     doc: '',
     extensions: [
-      paragraphMotionKeymap,
       modalCompartment.of(vim()),
       history(),
       drawSelection(),

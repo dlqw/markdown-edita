@@ -920,51 +920,27 @@ function buildDecorations(state: EditorState): DecorationSet {
 interface PreviewState {
   decorations: DecorationSet;
   tree: Tree;
-  widgetLines: Set<number>;
 }
 
 export const decorationField = StateField.define<PreviewState>({
   create: (state) => ({
     decorations: buildDecorations(state),
     tree: syntaxTree(state),
-    widgetLines: new Set<number>(),
   }),
   update: (value, transaction) => {
     const forced = transaction.effects.some((effect) => effect.is(refreshPreview));
     const settingsChanged = transaction.startState.field(settingsField) !== transaction.state.field(settingsField);
     const tree = syntaxTree(transaction.state);
     if (transaction.docChanged || transaction.selection || forced || settingsChanged || tree !== value.tree) {
-      const decorations = buildDecorations(transaction.state);
-      return { decorations, tree, widgetLines: collectWidgetLines(transaction.state, decorations) };
+      return { decorations: buildDecorations(transaction.state), tree };
     }
     return {
       decorations: value.decorations.map(transaction.changes),
       tree: value.tree,
-      widgetLines: value.widgetLines,
     };
   },
   provide: (field) => EditorView.decorations.from(field, (value) => value.decorations),
 });
-
-function collectWidgetLines(state: EditorState, decorations: DecorationSet): Set<number> {
-  const lines = new Set<number>();
-  const scan = decorations.iter();
-  const settings = state.field(settingsField);
-  if (!settings.blocks) {
-    return lines;
-  }
-  while (scan.value !== null) {
-    const spec = scan.value.spec as { block?: boolean };
-    if (spec.block) {
-      const span = lineSpan(state.doc, scan);
-      for (let line = span.first; line <= span.last; line += 1) {
-        lines.add(line);
-      }
-    }
-    scan.next();
-  }
-  return lines;
-}
 
 class CodeAssetsWatcher {
   private readonly stop: () => void;
