@@ -1,4 +1,4 @@
-# Markdown_Edita Kitchen Sink
+# Markdown_Edita Example
 
 A deliberately oversized document that touches every construct the live editor knows about. Move the cursor around and each line that holds it falls back to markdown source, while every other line stays rendered. Bold, italic, ***bold italic***, ~~strikethrough~~, `inline code`, an emoji 🎉, wide characters 汉字测试, full width punctuation（像这样），and an inline HTML tag <kbd>Ctrl</kbd> all live inside this paragraph.
 
@@ -12,7 +12,7 @@ A deliberately oversized document that touches every construct the live editor k
 - [Tables](#tables)
 - [Code blocks](#code-blocks)
 - [Diagrams](#diagrams)
-- [Indented code block](#indented-code-block)
+- [Indented code block]gg(#indented-code-block)
 - [Math](#math)
 - [Images](#images)
 - [HTML blocks](#html-blocks)
@@ -34,7 +34,7 @@ Unicode travels through the whole pipeline. Greek αβγδεζηθ, Cyrillic П�
 
 ## Links
 
-An [inline link with a title](https://code.visualstudio.com "VS Code home page") and a [relative link to the notes file](notes.md) resolve against the folder that holds this document. A [link to a section](#math) jumps inside the file.
+An [inline link with a title](https://code.visualstudio.com "VS Code home page") and a [relative link to the project readme](../README.md) resolve against the folder that holds this document. A [link to a section](#math) jumps inside the file.
 
 An autolink looks like <https://github.com/microsoft/vscode> and stays clickable without any brackets.
 
@@ -42,16 +42,16 @@ Literal autolinks need no brackets either, so https://code.visualstudio.com, www
 
 A footnote reference looks like this badge[^badge], and the footnote section below holds the definition.
 
-A reference link looks like [the reference target][markdown-edita-site], and this paragraph also uses a [shortcut reference][notes] form.
+A reference link looks like [the reference target][markdown-edita-site], and this paragraph also uses a [shortcut reference][readme] form.
 
-An inline link may carry [inline `code` inside its text](notes.md), and a link may hold **strong text** as well.
+An inline link may carry [inline `code` inside its text](../README.md), and a link may hold **strong text** as well.
 
 A linked image wraps two constructs at once, see the image section below.
 
 Broken and dangling forms appear in the diagnostics playground at the end of the document.
 
 [markdown-edita-site]: https://code.visualstudio.com/
-[notes]: notes.md
+[readme]: ../README.md
 
 ## Footnotes
 
@@ -169,7 +169,7 @@ Alignment markers.
 | gamma | delta | 345 |
 | epsilon | zeta | 6789 |
 
-Tricky cells follow. A cell may hold `code with | pipe`, an escaped \| pipe, a [link](notes.md), **strong**, and an ampersand & together with a less than < sign and a greater than > sign.
+Tricky cells follow. A cell may hold `code with | pipe`, an escaped \| pipe, a [link](../README.md), **strong**, and an ampersand & together with a less than < sign and a greater than > sign.
 
 | Feature | Markup | Notes |
 | --- | --- | --- |
@@ -534,7 +534,7 @@ export async function report(root: string): Promise<string> {
   return lines.join('\n');
 }
 
-if (process.argv[1] && process.argv[1].endsWith('kitchen-sink.js')) {
+if (process.argv[1] && process.argv[1].endsWith('example.js')) {
   report(process.cwd()).then((text) => process.stdout.write(`${text}\n`));
 }
 ```
